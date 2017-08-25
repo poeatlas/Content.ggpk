@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker run --name mysql --net="host" -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=poeatlas -e MYSQL_ROOT_HOST=127.0.0.1 -d mysql/mysql-server
+docker run --name mysql --net="host" -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=poeatlas -d mysql/mysql-server
 
 while docker ps | grep mysql | grep -qv healthy; do
     docker ps
