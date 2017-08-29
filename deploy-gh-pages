@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 
-docker run --name mysql --net="host" -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=poeatlas -e MYSQL_ROOT_HOST=localhost -d mysql/mysql-server
+docker run --name mysql \
+    -e MYSQL_DATABASE=poeatlas \
+    -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
+    -e MYSQL_USER=poeatlas \
+    -e MYSQL_PASSWORD=poeatlas\
+    -d mysql/mysql-server
 
 while docker ps | grep mysql | grep -qv healthy; do
     docker ps
     sleep 1
 done
 
-# docker run --rm --name cli --link mysql:mysql -e JAVA_OPTS="-Dspring.datasource.url=jdbc:mysql://mysql:3306/poeatlas?useSSL=false" poeatlas/cli dat
-docker run --rm --name cli --net="host" poeatlas/cli dat
+JAVA_OPTS="-Dspring.datasource.url=\"jdbc:mysql://mysql:3306/poeatlas?useSSL=false\""
+JAVA_OPTS="$JAVA_OPTS -Dspring.datasource.username=\"poeatlas\""
+JAVA_OPTS="$JAVA_OPTS -Dspring.datasource.password=\"poeatlas\""
+
+docker run --rm --name cli --link mysql:mysql \
+    -e JAVA_OPTS="$JAVA_OPTS" \
+    -v $PWD:/usr/src/app \
+    poeatlas/cli \
+    dat -input /usr/src/app/Data/ -output /usr/src/app/atlasmaps.json
+#    -it \
+# bash
+
+#docker run --rm --name cli --net="host" poeatlas/cli dat
 docker stop mysql
 docker rm -fv mysql
