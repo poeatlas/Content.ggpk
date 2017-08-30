@@ -1,4 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
+
+MIPMAP=1
+
+cleanup() {
+    docker stop mysql
+    docker rm -fv mysql
+}
+
+trap "cleanup" INT TERM EXIT
 
 docker run --name mysql \
     -e MYSQL_DATABASE=poeatlas \
@@ -8,7 +17,7 @@ docker run --name mysql \
     -d mysql/mysql-server
 
 while docker ps | grep mysql | grep -qv healthy; do
-    docker ps
+    # after 10 minutes, fails
     sleep 1
 done
 
@@ -20,10 +29,18 @@ docker run --rm --name cli --link mysql:mysql \
     -e JAVA_OPTS="$JAVA_OPTS" \
     -v $PWD:/usr/src/app \
     poeatlas/cli \
-    dat -input /usr/src/app/Data/ -output /usr/src/app/atlasmaps.json
+    dat -input /usr/src/app/Data/ -output /usr/src/app/output/atlas.json
+
+FOO=$(find . -name '*.dds')
+
+docker run --rm --name cli --link mysql:mysql \
+    -e JAVA_OPTS="$JAVA_OPTS" \
+    -v $PWD:/usr/src/app \
+    -P \
+    poeatlas/cli \
+    dds -mipmap ${MIPMAP} -root /usr/src/app ${FOO}
+
 #    -it \
 # bash
 
 #docker run --rm --name cli --net="host" poeatlas/cli dat
-docker stop mysql
-docker rm -fv mysql
