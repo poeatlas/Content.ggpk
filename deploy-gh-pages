@@ -44,6 +44,7 @@ docker run --rm --name cli --link mysql:mysql \
     dds -mipmap ${MIPMAP} -root /usr/src/app ${FOO}
 
 #copy new atlas.json into atlas-ui submodule and build atlas-ui
+git clone https://github.com/poeatlas/atlas-ui.git
 cp -Rf ./output/atlas.json ./atlas-ui/src/resources/atlas.json
 cd atlas-ui
 npm install
