@@ -1,0 +1,3 @@
+[submodule "atlas-ui"]
+	path = atlas-ui
+	url = https://github.com/poeatlas/atlas-ui.git
