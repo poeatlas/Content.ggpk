@@ -40,6 +40,11 @@ docker run --rm --name cli --link mysql:mysql \
     poeatlas/cli \
     dds -mipmap ${MIPMAP} -root /usr/src/app ${FOO}
 
+cp -Rf ./output/atlas.json ./atlas-ui/src/resources/atlas.json
+cd atlas-ui
+npm run build
+
+
 #    -it \
 # bash
 
