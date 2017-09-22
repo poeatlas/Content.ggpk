@@ -1,4 +1,0 @@
-#!/bin/bash
-
-export ATLAS_UI_VERSION=0.0.0
-export CONTENT_GGPK_VERSION=0.0.0
